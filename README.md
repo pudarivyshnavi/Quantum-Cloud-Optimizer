@@ -1,85 +1,70 @@
-# ⚛️ Quantum Cloud Optimizer
+Quantum Cloud Optimizer
 
-<div align="center">
+A React + TypeScript + Vite dashboard for exploring cloud workloads, analyzing resource requirements, and visualizing quantum-inspired optimization concepts.
 
-### Intelligent Cloud Task Optimization with Quantum-Inspired Scheduling
+📌 Overview
 
-A modern web-based optimization dashboard for analyzing and visualizing cloud workloads using task characteristics such as CPU requirements, memory, bandwidth, priority, deadlines, VM assignment, and execution time.
+Quantum Cloud Optimizer is a web-based cloud workload analysis and optimization project.
 
-</div>
+The application provides an interactive dashboard for analyzing a workload dataset containing task priorities, deadlines, CPU requirements, memory requirements, bandwidth requirements, VM assignments, and execution times.
 
----
+The project demonstrates how cloud workload characteristics can be explored through data visualization and how quantum-inspired optimization concepts can be applied to cloud resource allocation and scheduling.
 
-## 📌 Overview
+✨ Features
+📊 Interactive workload dashboard
+⚛️ Quantum-inspired cloud optimization concept
+📈 Workload statistics and visualizations
+🎯 Task priority analysis
+💻 Virtual machine distribution analysis
+⏱️ Execution-time analysis
+🧠 CPU, memory, and bandwidth demand analysis
+📂 Dataset stored locally in CSV-style TXT format
+🖥️ Responsive React interface
+🎨 Modern dashboard UI
+🧪 Unit testing with Vitest
+🔍 ESLint code-quality checks
+⚡ Fast Vite development environment
+🏗️ Architecture
+                    ┌─────────────────────────────┐
+                    │       Quantum Cloud         │
+                    │         Optimizer           │
+                    └──────────────┬──────────────┘
+                                   │
+                                   ▼
+                    ┌─────────────────────────────┐
+                    │        React Frontend       │
+                    │     TypeScript + Vite       │
+                    └──────────────┬──────────────┘
+                                   │
+                 ┌─────────────────┼─────────────────┐
+                 │                 │                 │
+                 ▼                 ▼                 ▼
+          ┌────────────┐   ┌────────────┐   ┌────────────┐
+          │ Workload   │   │ Analytics  │   │ Quantum    │
+          │ Dataset    │   │ & Charts   │   │ Optimizer  │
+          └────────────┘   └────────────┘   └────────────┘
+                 │                 │                 │
+                 └─────────────────┼─────────────────┘
+                                   ▼
+                    ┌─────────────────────────────┐
+                    │       Cloud Workload        │
+                    │          Analysis            │
+                    └─────────────────────────────┘
+                    📊 Dataset
 
-**Quantum Cloud Optimizer** is a React and TypeScript based web application designed to provide an interactive interface for studying and optimizing cloud computing workloads.
+The project uses a sample cloud workload dataset located at:
 
-The project works with a structured task dataset containing **50 cloud tasks** and provides a foundation for exploring intelligent scheduling and resource optimization.
+data/quantum-tasks.txt
 
-The application focuses on:
+The dataset contains 50 cloud tasks.
 
-- ⚛️ Quantum-inspired optimization concepts
-- ☁️ Cloud resource scheduling
-- 📊 Workload analysis and visualization
-- 🎯 Task priority and deadline analysis
-- 💻 CPU and memory resource requirements
-- 🌐 Bandwidth requirements
-- 🖥️ Virtual-machine allocation
-- ⏱️ Task execution-time analysis
-- 📈 Interactive dashboard visualization
-
----
-
-## ✨ Key Features
-
-### 📊 Workload Dashboard
-
-Visualize the characteristics of the cloud workload through an interactive dashboard.
-
-### ⚛️ Quantum-Inspired Optimization
-
-The project is structured around the idea of applying quantum-inspired optimization techniques to cloud scheduling problems.
-
-### 🎯 Priority-Aware Tasks
-
-Each task contains a priority value that can be used when analyzing scheduling decisions.
-
-### ⏰ Deadline Analysis
-
-Task deadlines are included to support deadline-aware optimization and scheduling strategies.
-
-### 💻 Resource-Aware Scheduling
-
-The dataset contains:
-
-- CPU requirements
-- Memory requirements
-- Bandwidth requirements
-- VM assignment
-- Execution time
-
-These parameters provide the resource information required for cloud workload analysis.
-
-### 📈 Data Visualization
-
-The project is designed to present workload characteristics using charts and dashboard visualizations.
-
----
-
-## 🗂️ Dataset
-
-The project includes a sample workload dataset:
-
-```text
-data/
-└── quantum-tasks.txt
-Dataset Fields
+Dataset Schema
 Field	Description
 task_id	Unique task identifier
 length	Task workload length
-priority	Task priority
+priority	Task priority level
 deadline	Task deadline
-cpu_req	Required CPU resource
+cpu_req	Required CPU resources
 memory_req	Required memory
 bandwidth	Required network bandwidth
 vm_id	Assigned virtual machine
@@ -89,7 +74,52 @@ task_id,length,priority,deadline,cpu_req,memory_req,bandwidth,vm_id,execution_ti
 1,4500,5,15,90,4096,800,1,45
 2,100,1,60,5,128,10,3,2
 3,3800,5,12,85,3584,750,1,40
-🏗️ Architecture
+4,150,1,55,8,256,15,4,3
+📊 Workload Visualizations
+
+The following charts are generated from the actual 50-task dataset included in this repository.
+
+🎯 Task Priority Distribution
+
+This chart shows how the 50 tasks are distributed across the available priority levels.
+
+<img src="assets/priority-distribution.png" alt="Task Priority Distribution" width="85%">
+🖥️ Virtual Machine Distribution
+
+This chart shows how tasks are distributed across the virtual machines represented in the dataset.
+
+<img src="assets/vm-distribution.png" alt="Virtual Machine Distribution" width="85%">
+⏱️ Execution Time Across the Workload
+
+This visualization shows the execution-time values across the 50 task records.
+
+<img src="assets/execution-time.png" alt="Execution Time Across Tasks" width="95%">
+💻 Resource Demand
+
+CPU, memory, and bandwidth have different units and scales, so this visualization uses normalized values to show their relative demand patterns across the workload.
+
+<img src="assets/resource-demand.png" alt="Normalized Resource Demand" width="95%">
+🧠 Optimization Concept
+
+Cloud scheduling is a resource allocation problem where multiple tasks compete for computational resources.
+
+The workload can be represented using characteristics such as:
+Task
+ │
+ ├── Length
+ ├── Priority
+ ├── Deadline
+ ├── CPU Requirement
+ ├── Memory Requirement
+ ├── Bandwidth Requirement
+ ├── VM Assignment
+ └── Execution Time
+ The optimization process can consider these characteristics when exploring scheduling decisions.
+
+The quantum-inspired direction of the project provides a framework for experimenting with optimization strategies for complex scheduling problems.
+
+Note: The repository does not claim benchmark performance improvements that have not been measured. The included charts describe the supplied workload rather than claiming an optimization advantage.
+
 🛠️ Technology Stack
 Frontend
 React
@@ -97,26 +127,68 @@ TypeScript
 Vite
 Tailwind CSS
 shadcn/ui
-Development
+Development Tools
 Node.js
 npm
 Git
 GitHub
+Testing
+Vitest
+Playwright configuration
+ESLint
 Data
-Structured TXT/CSV-style workload dataset
+Structured TXT / CSV-style workload dataset
 50 cloud task records
 📁 Project Structure
 Quantum-Cloud-Optimizer/
+│
+├── assets/
+│   ├── architecture.svg
+│   ├── banner.svg
+│   ├── banner-animated.gif
+│   ├── priority-distribution.png
+│   ├── vm-distribution.png
+│   ├── execution-time.png
+│   └── resource-demand.png
 │
 ├── data/
 │   └── quantum-tasks.txt
 │
 ├── public/
+│   ├── favicon.ico
+│   ├── placeholder.svg
+│   └── robots.txt
 │
 ├── src/
 │   ├── components/
+│   │   ├── ui/
+│   │   ├── Navbar.tsx
+│   │   └── NavLink.tsx
+│   │
+│   ├── context/
+│   │   └── SimulationContext.tsx
+│   │
+│   ├── hooks/
+│   │
+│   ├── lib/
+│   │   ├── fileParser.ts
+│   │   ├── simulation.ts
+│   │   └── utils.ts
+│   │
 │   ├── pages/
-│   └── ...
+│   │   ├── AboutPage.tsx
+│   │   ├── ConfigPage.tsx
+│   │   ├── Home.tsx
+│   │   ├── Index.tsx
+│   │   ├── ResultsPage.tsx
+│   │   ├── SimulationPage.tsx
+│   │   └── UploadPage.tsx
+│   │
+│   ├── test/
+│   ├── App.css
+│   ├── App.tsx
+│   ├── index.css
+│   └── main.tsx
 │
 ├── .gitignore
 ├── components.json
@@ -128,96 +200,129 @@ Quantum-Cloud-Optimizer/
 ├── tailwind.config.ts
 ├── tsconfig.json
 ├── vite.config.ts
+├── vitest.config.ts
 └── README.md
 🚀 Getting Started
 Prerequisites
 
-Make sure you have:
+Make sure the following are installed:
 
-Node.js installed
-npm installed
-Git installed
-1. Clone the repository
+Node.js
+npm
+Git
+
+You can verify them with:
+node --version
+npm --version
+git --version1. 
+Clone the Repository
 git clone https://github.com/pudarivyshnavi/Quantum-Cloud-Optimizer.git
-2. Enter the project
+2. Enter the Project
 cd Quantum-Cloud-Optimizer
-3. Install dependencies
+3. Install Dependencies
 npm install
-4. Start the development server
+4. Start the Development Server
 npm run dev
 
-The Vite development server will provide a local URL, typically:
+Vite will display the local development URL in the terminal.
 
-http://localhost:8080/
-🧪 Build the Project
+For the current project configuration, the development server runs on:
 
-To create a production build:
+[http://localhost:8080/](http://localhost:8080/)
+🏭 Production Build
+
+Create a production build with:
 
 npm run build
-
-To preview the production build:
+Preview the production build with:
 
 npm run preview
-🔍 Code Quality
+🧪 Testing
 
-Run ESLint with:
+Run the test suite:
+
+npm run test
+
+Run ESLint:
 
 npm run lint
 
-Run the test suite with:
+Scheduling Factors
+                Cloud Workload
+                       │
+       ┌───────────────┼────────────────┐
+       │               │                │
+   Priority         Deadline        Resources
+       │               │                │
+       │               │       ┌────────┼────────┐
+       │               │       │        │        │
+       │               │      CPU     Memory  Bandwidth
+       │               │
+       └───────────────┼────────────────┘
+                       │
+                  VM Assignment
+                       │
+                       ▼
+                Scheduling Analysis
+                       │
+                       ▼
+                Optimization Study
+📋 Workload Characteristics
 
-npm run test
-📊 Workload Analysis
+The sample dataset contains workloads with different:
 
-The included dataset contains 50 cloud tasks that can be analyzed across multiple dimensions:
+Task sizes
+Priority levels
+Deadlines
+CPU requirements
+Memory requirements
+Bandwidth requirements
+VM assignments
+Execution times
 
-Task Priority
-      │
-      ├── Deadline
-      │
-      ├── CPU Requirement
-      │
-      ├── Memory Requirement
-      │
-      ├── Bandwidth Requirement
-      │
-      ├── VM Assignment
-      │
-      └── Execution Time
-
-These dimensions provide the input characteristics for cloud scheduling and optimization experiments.
+This makes the dataset useful for demonstrating cloud scheduling and resource-allocation analysis.
 
 🎯 Project Goals
 
-The project aims to provide a visual and interactive environment for exploring:
+The main goals of the project are:
 
-Cloud workload characteristics
-Resource allocation
-Task scheduling
-Priority-aware optimization
-Deadline-aware scheduling
-Virtual-machine utilization
-Quantum-inspired optimization approaches
-Workload visualization
+Analyze cloud workload characteristics.
+Visualize workload and resource requirements.
+Understand VM workload distribution.
+Explore cloud scheduling challenges.
+Demonstrate quantum-inspired optimization concepts.
+Provide a foundation for future optimization algorithms.
 🔮 Future Improvements
 
-Possible future extensions include:
+Potential future extensions include:
 
-Quantum optimization algorithms
-QAOA-based scheduling experiments
-Automatic VM allocation
+Quantum-inspired scheduling algorithms
+QAOA-based optimization experiments
+Advanced VM allocation
+Dynamic workload scheduling
+Deadline-aware optimization
 Multi-objective optimization
-Resource utilization metrics
-Makespan comparison
-Energy-aware scheduling
-Before/after optimization comparisons
-Larger benchmark datasets
-Real-time optimization visualization
-📸 Project Preview
+Real-time cloud monitoring
+Cloud resource utilization tracking
+Optimization benchmark comparison
+Integration with quantum computing simulators
+Interactive optimization controls
+Larger real-world workload datasets
+🖼️ Project Visuals
+Architecture
 
-Project screenshots and generated workload-analysis charts will be added to the repository under:
+Dashboard Visualizations
 
-assets/
+The project includes generated visualizations based on the actual 50-task workload dataset.
+
+These visualizations are intended to explain the characteristics of the dataset and should not be interpreted as measured optimization benchmarks.
+
+📌 Important Note
+
+This project is primarily a cloud workload analysis and quantum-inspired optimization exploration project.
+
+The charts included in the repository represent the supplied workload dataset. They do not claim that a quantum optimization algorithm has achieved a specific performance improvement unless such a benchmark is explicitly implemented and measured.
+
 👩‍💻 Author
 
 Pudari Vyshnavi
@@ -228,11 +333,12 @@ https://github.com/pudarivyshnavi
 
 📄 License
 
-This project is available for educational and project-development purposes.
+This project is provided for educational and project-development purposes.
 
 <div align="center">
 ⚛️ Quantum Cloud Optimizer
-
 Explore • Analyze • Optimize • Visualize
 
-</div> ```
+Built with React + TypeScript + Vite
+
+</div>
