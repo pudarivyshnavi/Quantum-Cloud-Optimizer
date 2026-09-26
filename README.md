@@ -333,6 +333,7 @@ Cloud Workload
 The project provides a software environment for exploring this optimization perspective.
 
 The term quantum-inspired refers to the project's optimization direction and conceptual foundation; it does not by itself imply execution on a quantum computer.
+
 🔁 System Workflow
 <img width="797" height="187" alt="image" src="https://github.com/user-attachments/assets/2850fecf-24d7-4948-a735-9d5ad2fccb1d" />
 Workflow Steps
@@ -420,6 +421,7 @@ These visualizations help demonstrate how heterogeneous workloads can create dif
 📁 Project Structure
 
 The project follows a modern React/Vite application structure.
+
 quantum-cloud-optimizer/
 │
 ├── data/
@@ -682,11 +684,5 @@ https://github.com/pudarivyshnavi
 Project Repository:
 
 https://github.com/pudarivyshnavi/Quantum-Cloud-Optimizer
-
-📄 License
-
-No explicit LICENSE file is currently included in the repository.
-
-The project is therefore presented without an explicitly declared open-source license.
 
 <p align="center"> <strong>⚛️ Quantum Cloud Optimizer</strong> <br> Cloud Workload Analysis • Scheduling • Optimization • Visualization <br><br> Built by <strong>Pudari Vyshnavi</strong> </p> ```
