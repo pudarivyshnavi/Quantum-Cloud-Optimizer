@@ -1,688 +1,515 @@
-# ⚛️ Quantum Cloud Optimizer
+# Quantum Cloud Optimizer
 
-<p align="center">
-  <strong>A Quantum-Inspired Cloud Task Scheduling and Resource Optimization Dashboard</strong>
-</p>
+**A browser-based cloud-task scheduling simulator that compares round-robin assignment with a classical, quantum-inspired evolutionary heuristic.**
 
-<p align="center">
-  An interactive web application for analyzing cloud workloads, task priorities, deadlines, resource requirements, VM allocation, and execution characteristics through optimization-oriented scheduling and visualization.
-</p>
+[![React](https://img.shields.io/badge/React-18-149ECA?logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
+[![License](https://img.shields.io/badge/license-not%20specified-lightgrey)](#license)
 
-<p align="center">
-  <a href="https://github.com/pudarivyshnavi/Quantum-Cloud-Optimizer">Repository</a>
-  •
-  <a href="https://github.com/pudarivyshnavi">GitHub Profile</a>
-</p>
+Explore the project: [Repository](https://github.com/pudarivyshnavi/Quantum-Cloud-Optimizer) · [Author profile](https://github.com/pudarivyshnavi)
 
----
+Quantum Cloud Optimizer is an academic demonstration for loading numeric task data, configuring a simulated VM environment, running two task-to-VM assignment strategies, and comparing their modeled metrics. All parsing, simulation, and rendering take place in the web application; the repository does not contain a backend service or connect to quantum hardware or a cloud provider.
 
-## 📑 Table of Contents
+## Table of Contents
 
-- [Overview](#-overview)
-- [Problem Statement](#-problem-statement)
-- [Motivation](#-motivation)
-- [Core Features](#-core-features)
-- [Technology Stack](#-technology-stack)
-- [System Architecture](#-system-architecture)
-- [Architecture Explanation](#-architecture-explanation)
-- [Dataset](#-dataset)
-- [Dataset Schema](#-dataset-schema)
-- [Data Processing](#-data-processing)
-- [Simulation and Optimization Logic](#-simulation-and-optimization-logic)
-- [Scheduling Factors](#-scheduling-factors)
-- [Optimization Concept](#-optimization-concept)
-- [System Workflow](#-system-workflow)
-- [Application Modules](#-application-modules)
-- [Data Visualization](#-data-visualization)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [Prerequisites](#-prerequisites)
-- [Installation](#-installation)
-- [Running the Development Server](#-running-the-development-server)
-- [Production Build](#-production-build)
-- [Preview](#-preview)
-- [Testing](#-testing)
-- [Linting](#-linting)
-- [How the Application Works](#-how-the-application-works)
-- [Key Capabilities](#-key-capabilities)
-- [Project Goals](#-project-goals)
-- [Future Enhancements](#-future-enhancements)
-- [Important Technical Notes](#-important-technical-notes)
-- [Disclaimer](#-disclaimer)
-- [Author and Connect](#-author-and-connect)
-- [License](#-license)
+- [Overview](#overview)
+- [Problem Statement and Motivation](#problem-statement-and-motivation)
+- [Objectives](#objectives)
+- [Core Features](#core-features)
+- [Technology Stack](#technology-stack)
+- [System Architecture](#system-architecture)
+- [Architecture Explanation](#architecture-explanation)
+- [Dataset and Input Data](#dataset-and-input-data)
+- [Dataset Schema](#dataset-schema)
+- [Data Processing and Parsing](#data-processing-and-parsing)
+- [Simulation and Optimization Logic](#simulation-and-optimization-logic)
+- [Scheduling Factors and Metrics](#scheduling-factors-and-metrics)
+- [Optimization Concept and Scope](#optimization-concept-and-scope)
+- [System Workflow](#system-workflow)
+- [Application Pages and Modules](#application-pages-and-modules)
+- [Results and Visualization](#results-and-visualization)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Running the Development Server](#running-the-development-server)
+- [Production Build and Preview](#production-build-and-preview)
+- [Testing](#testing)
+- [Linting](#linting)
+- [How the Application Works](#how-the-application-works)
+- [Key Capabilities](#key-capabilities)
+- [Project Goals](#project-goals)
+- [Limitations and Technical Notes](#limitations-and-technical-notes)
+- [Future Enhancements](#future-enhancements)
+- [Disclaimer](#disclaimer)
+- [Author and Connect](#author-and-connect)
+- [License](#license)
 
----
+## Overview
 
-## 🔭 Overview
+Cloud task scheduling maps computational jobs to available virtual machines (VMs). Different task workloads and VM capacities can produce different execution times and load distributions. This project provides a small, interactive environment for examining that assignment problem with an included workload or a user-uploaded text file.
 
-**Quantum Cloud Optimizer** is a web-based cloud workload analysis and scheduling project designed to explore how optimization concepts can be applied to cloud task management.
+The current application calculates a round-robin baseline and a QIEA-labeled, quantum-inspired evolutionary search, then presents their model outputs in charts and a comparison table. It is intended for students and evaluators exploring scheduling concepts, not for provisioning or operating production cloud infrastructure.
 
-The project works with a structured workload dataset containing task characteristics such as task length, priority, deadline, CPU requirements, memory requirements, bandwidth requirements, VM assignment, and execution time.
+## Problem Statement and Motivation
 
-The application provides a visual environment for understanding workload characteristics and exploring scheduling and optimization concepts through an interactive dashboard.
+Assigning jobs to VMs is a combinatorial problem: the number of possible mappings grows quickly with the number of tasks and machines. A scheduling strategy can affect the modeled makespan, distribution of load, energy estimate, and deadline-based score.
 
-The project combines:
+The supplied records include priority, CPU, memory, bandwidth, VM ID, and execution-time columns alongside task length and deadline. However, the current simulation uses task length (or a detected workload column) for assignment metrics and uses a detected deadline only when calculating its scheduling-efficiency metric. It does **not** currently optimize based on task priority, CPU or memory requirements, bandwidth, existing VM IDs, or the supplied `execution_time` field. See [Limitations and Technical Notes](#limitations-and-technical-notes) for the implications.
 
-- Cloud task scheduling concepts
-- Resource requirement analysis
-- Workload distribution
-- Priority and deadline awareness
-- VM allocation analysis
-- Execution-time analysis
-- Data visualization
-- Optimization-oriented simulation
-- Quantum-inspired optimization concepts
+## Objectives
 
-> **Important:** The current project should be understood as a quantum-inspired/optimization-oriented software project and visualization environment. It does not claim to execute workloads on physical quantum hardware unless explicitly implemented in the source code.
+- Provide a browser interface for uploading and previewing numeric task data.
+- Let users configure search parameters and simulated VM count and processing capacity.
+- Compare a deterministic round-robin mapping with a randomized quantum-inspired heuristic.
+- Calculate and display modeled energy, makespan, utilization, deadline-based efficiency, and estimated cost.
+- Make the simulation process and its assumptions inspectable for learning and experimentation.
 
----
+## Core Features
 
-## 🎯 Problem Statement
+- **Text workload upload:** Select or drag and drop a `.txt` file; view the detected row count, column names, and first ten records.
+- **Configurable simulation:** Adjust population size, generations, mutation rate, crossover probability, rotation angle, VM count, VM MIPS, and the selected energy-model label.
+- **Two scheduling outputs:** Compare round-robin assignment with a classical heuristic labeled QIEA.
+- **Progress feedback:** Follow simulation stages and generation progress in the browser.
+- **Results dashboard:** Review metric cards, interactive Recharts comparisons, a fitness-history line chart, and a metric table.
+- **Print/export flow:** Open a printable HTML results summary through the browser's print dialog. The button is labeled “Export Results”; the implementation does not generate a PDF file directly.
+- **Responsive navigation:** Move among the Home, Upload, Configure, Results, and About pages. The Simulation page is reached from configuration during the workflow.
 
-Cloud computing environments execute large numbers of tasks across available virtual machines and computing resources.
+## Technology Stack
 
-Efficient task scheduling requires consideration of several workload characteristics, including:
+| Technology | Role in this project |
+| --- | --- |
+| React 18 | Component-based browser interface and application state |
+| TypeScript | Types for pages, parsed workload data, simulation configuration, and results |
+| Vite 5 | Development server and production bundler; configured for port `8080` |
+| React Router | Client-side page routing |
+| Tailwind CSS and project CSS | Styling and responsive layout |
+| shadcn/ui-style components with Radix UI | Reusable controls and accessible interaction primitives |
+| Recharts | Runtime charts on the results page |
+| Framer Motion | Page and component transitions |
+| Lucide React | Interface icons |
+| Vitest and Testing Library | Unit-test runner and test utilities |
+| ESLint | TypeScript/React linting |
+| npm | Dependency installation and project scripts |
 
-- Task length
-- Task priority
-- Deadline
-- CPU requirement
-- Memory requirement
-- Bandwidth requirement
-- VM assignment
-- Execution time
+There is no server-side runtime, database, cloud SDK, or quantum-computing SDK in the implemented application path.
 
-Poor scheduling decisions can result in uneven resource utilization, unnecessary delays, inefficient workload distribution, and increased execution time.
+## System Architecture
 
-The **Quantum Cloud Optimizer** project explores this scheduling problem through workload analysis, optimization-oriented processing, and visualization.
+The application is a client-side React SPA. The included file is a sample for the user to select; it is not automatically loaded by the app. Uploaded text is parsed in the browser, shared through React context, passed to the local simulation module, and then rendered on the results page.
 
-The goal is to provide a clear environment in which cloud task characteristics can be analyzed and scheduling concepts can be explored systematically.
+```mermaid
+flowchart LR
+      User[User]
+      subgraph Browser[Browser: React and TypeScript]
+            Router[App routes and Navbar]
+            Upload[UploadPage]
+            Parser[fileParser.ts]
+            State[SimulationContext]
+            Config[ConfigPage]
+            SimPage[SimulationPage]
+            Engine[simulation.ts]
+            Results[ResultsPage]
+            Charts[Recharts charts and results table]
+      end
+      Sample[data/quantum-tasks.txt<br/>user-selected sample]
+      User --> Router
+      Sample -. selected by user .-> Upload
+      User --> Upload
+      Upload --> Parser
+      Parser --> State
+      State --> Config
+      Config --> State
+      State --> SimPage
+      SimPage --> Engine
+      State --> Engine
+      Engine --> State
+      State --> Results
+      Results --> Charts
+      Charts --> User
+```
 
----
+### Text Architecture
 
-## 💡 Motivation
+```text
+User and selected .txt workload
+                   |
+                   v
+UploadPage -> fileParser.ts -> SimulationContext <- ConfigPage
+                                                        |
+                                                        v
+                                          SimulationPage -> simulation.ts
+                                                        |             |
+                                                        +-- results --+
+                                                                  |
+                                                                  v
+                                       ResultsPage -> Recharts / table
+```
 
-Cloud workloads are heterogeneous: different tasks can require very different amounts of CPU, memory, bandwidth, execution time, and scheduling priority.
+## Architecture Explanation
 
-A scheduling strategy therefore needs to consider more than simply processing tasks in the order they arrive.
+| Component | Responsibility and data flow |
+| --- | --- |
+| `App.tsx` and `Navbar.tsx` | Register routes and provide navigation around the page components. `SimProvider` wraps the routed pages. |
+| `UploadPage.tsx` | Accepts `.txt` uploads through a file chooser or drop zone, calls the parser, and shows a parsed preview. |
+| `fileParser.ts` | Converts delimited text into headers and numeric row objects, applying basic row/column-count checks. |
+| `SimulationContext.tsx` | Holds the parsed input, configuration, and results in React state while the user moves between pages. This state is in-memory and is not persisted. |
+| `ConfigPage.tsx` | Edits the search and VM configuration stored in context. |
+| `SimulationPage.tsx` | Starts `runSimulation`, displays progress, stores the returned metrics, and navigates to results. |
+| `simulation.ts` | Detects a workload and optional deadline column, produces both assignments, evaluates metrics, and returns fitness history and comparisons. |
+| `ResultsPage.tsx` | Reads results from context and renders summary values, charts, a comparison table, and the browser print flow. |
 
-This project is motivated by the idea of representing cloud scheduling as an optimization problem where multiple task and resource constraints can be considered together.
+No network request or backend handoff occurs in this pipeline. Uploaded data remains in the current page session's browser memory.
 
-The project also provides an opportunity to explore how **quantum-inspired optimization concepts** could be applied to complex scheduling problems in future implementations.
+## Dataset and Input Data
 
----
+The repository includes [`data/quantum-tasks.txt`](data/quantum-tasks.txt), a comma-delimited text file with one header row and **50 task records**. Although the extension is `.txt`, its contents use comma-separated columns. The application does not preload this file: users must choose it on the Upload page to use it as the sample workload.
 
-## ✨ Core Features
+Example from the actual file:
 
-The project provides an optimization-focused cloud workload dashboard with capabilities centered around:
+| task_id | length | priority | deadline | cpu_req | memory_req | bandwidth | vm_id | execution_time |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 4500 | 5 | 15 | 90 | 4096 | 800 | 1 | 45 |
 
-- 📊 Cloud workload analysis
-- ⚙️ Task scheduling and optimization concepts
-- 🎯 Task priority analysis
-- ⏱️ Deadline and execution-time analysis
-- 💻 CPU resource analysis
-- 🧠 Memory requirement analysis
-- 🌐 Bandwidth requirement analysis
-- 🖥️ Virtual-machine distribution analysis
-- 📈 Workload visualization
-- 📋 Structured task dataset processing
-- 🔬 Optimization-oriented simulation
-- ⚛️ Exploration of quantum-inspired cloud optimization concepts
-- 🖥️ Interactive web-based dashboard presentation
+No units or external benchmark provenance are declared in the file, so the numeric values should be treated as sample simulation inputs rather than standardized real-world measurements.
 
----
+## Dataset Schema
 
-## 🛠️ Technology Stack
+| Column | Meaning indicated by its name | Current simulation use |
+| --- | --- | --- |
+| `task_id` | Task identifier | Excluded when inferring a fallback workload column; otherwise not used in the assignment calculation. |
+| `length` | Task workload length | **Used** as the primary workload column. |
+| `priority` | Task priority | Parsed and previewed, but not used by the scheduler or metrics. |
+| `deadline` | Task deadline | **Used only** for the deadline-based efficiency calculation. |
+| `cpu_req` | CPU requirement | Parsed and previewed, but not used by the simulation. |
+| `memory_req` | Memory requirement | Parsed and previewed, but not used by the simulation. |
+| `bandwidth` | Bandwidth requirement | Parsed and previewed, but not used by the simulation. |
+| `vm_id` | VM identifier in the input record | Parsed and previewed; the simulation generates its own task-to-VM mappings instead. |
+| `execution_time` | Execution-time value in the input record | Parsed and previewed, but not used by the simulation's makespan calculation. |
 
-| Category | Technology |
-|---|---|
-| Frontend | React |
-| Programming Language | TypeScript |
-| Build Tool | Vite |
-| Styling | CSS / Tailwind-based styling where implemented |
-| Data | Structured TXT/CSV-style workload dataset |
-| Visualization | Frontend chart/visualization components used by the application |
-| Package Manager | npm |
-| Development Server | Vite |
+## Data Processing and Parsing
 
-The exact implementation in the repository remains the source of truth for individual components and dependencies.
+`UploadPage` reads the selected file with the browser `FileReader` API and accepts files whose names end in `.txt`. `parseFile` then:
 
----
+1. Trims and removes empty lines.
+2. Detects a tab delimiter when the header contains tabs and at least as many tabs as commas; otherwise it detects commas, falling back to whitespace splitting.
+3. Uses the first non-empty line as column headers and parses remaining cells with `parseFloat`.
+4. Converts non-numeric cell values to `0`; rows with too few columns are skipped.
+5. Requires at least one header plus five data rows, and at least two columns.
 
-## 🏗️ System Architecture
+The parser is intentionally simple: it does not implement full quoted-CSV escaping, schema-specific validation, units, or checks for missing columns required by a particular analysis. The simulation has some workload-column name detection and fallback logic, described below.
+
+## Simulation and Optimization Logic
+
+Both approaches process the same parsed rows and configured VM count/MIPS.
+
+### Round-Robin Baseline
+
+The baseline maps row index `i` to VM `i % numVMs`. This is a round-robin allocation, **not FCFS**, despite the Simulation page's progress text referring to “Traditional Scheduling (FCFS).” The allocation does not sort tasks by priority, length, or deadline.
+
+### QIEA-Labeled Heuristic
+
+The implementation in `src/lib/simulation.ts` uses classical JavaScript calculations:
+
+1. Create `populationSize` candidate individuals, each with one `[alpha, beta]` pair per task. Each pair begins as `[cos(angle), sin(angle)]` for a random angle in `[0, π/2)`, so its components have unit magnitude.
+2. Convert each pair's angle into a VM index to observe a candidate task-to-VM assignment.
+3. Evaluate the assignment and calculate fitness.
+4. Rotate each candidate's pairs by the configured angle in the forward direction when its fitness improves the global best, or in reverse otherwise.
+5. With the configured mutation probability, replace one randomly selected task's pair with a new random angle.
+6. Record the global best fitness for each generation and evaluate the best assignment at the end.
+
+If the search produces no usable best assignment, a fallback sorts tasks by workload descending and assigns each to the currently least-loaded VM. The search uses `Math.random()` and does not set a seed, so repeated runs are not guaranteed to be reproducible.
+
+The UI exposes a crossover probability, but `crossoverProb` is not read by the simulation algorithm and no crossover operation is implemented. The configuration control currently has no effect on results.
+
+## Scheduling Factors and Metrics
+
+### Workload and Deadline Detection
+
+The simulation looks for workload headers such as `length`, `mi`, `workload`, `size`, `cloudlet_length`, or `task_length`, case-insensitively. If none is found, it chooses the non-ID column with the highest average numeric value; as a final fallback it uses the second header. A deadline is detected from `deadline`, `due`, or `max_time`. Missing workload values fall back to `1`; missing or zero deadline values are treated as no deadline.
+
+### Configuration
+
+| Parameter | Default | Used by the simulation? |
+| --- | ---: | --- |
+| Population size | 50 | Yes; number of candidate individuals |
+| Generations | 100 | Yes; number of search iterations |
+| Mutation rate | 0.05 | Yes; chance to mutate one task in an individual |
+| Crossover probability | 0.8 | No; control exists in UI/state but has no algorithm implementation |
+| Rotation angle | 0.05 | Yes; amplitude-pair update angle |
+| Number of VMs | 10 | Yes |
+| VM processing power | 1000 MIPS | Yes; converts assigned workload to modeled time |
+| Energy model | Linear | Yes; selects a power factor and imbalance penalty formula |
+
+### Metric Calculations
+
+Let $L_v$ be the sum of task workloads assigned to VM $v$, $M$ the configured MIPS per VM, and $T_v = L_v / M$. The implementation reports:
+
+- **Makespan / execution time:** $\max_v T_v$.
+- **Utilization / balance score:** $100 \times \frac{1}{N}\sum_v (T_v / \max_j T_j)$, where $N$ is the VM count. This is the implementation's normalized balance formula, not a measurement of physical CPU utilization.
+- **Energy estimate:** For each VM, base energy is $(L_v/M) \times p$, multiplied by an imbalance penalty. The power factor $p$ is `0.10` for Linear, `0.12` for Square, and `0.15` for Cubic. The penalty uses `1 + 0.5d` for Linear, `1 + 0.8d` for Square, and `1 + d²` for Cubic, where $d = |L_v - \bar{L}| / \bar{L}$ and $\bar{L}$ is average VM load.
+- **Scheduling efficiency:** Percentage of tasks whose cumulative workload divided by VM MIPS is within that task's detected deadline (or has no deadline). Tasks are checked in their input-row order, separately for each VM; this is a simplified estimate, not a full event-based execution simulation.
+- **Estimated cost:** `totalEnergy * 0.12 + numVMs * makespan * 0.065`. The dollar sign shown by the interface is a presentation label; this formula is not tied to any provider's rates.
+
+The comparison's **fitness** uses energy, makespan, and the inverse of the utilization score:
+
+```text
+fitness = 1 / (0.4 * energy + 0.4 * makespan
+                     + 0.2 * (1 - utilization / 100) + 0.0001)
+```
+
+The formula combines raw modeled energy and time with a normalized utilization term. Scheduling efficiency and estimated cost are reported but do not contribute to fitness. The returned “improvement” values are arithmetic comparisons of the two model outputs; they are not measured performance gains.
+
+## Optimization Concept and Scope
+
+**Implemented:** A classical, randomized heuristic uses amplitude-pair representation and rotation-inspired updates, then compares its selected assignment with round-robin.
+
+**Quantum-inspired concept:** The pair representation and rotation terminology borrow ideas associated with quantum-inspired evolutionary methods. This project does not simulate a quantum processor, build quantum circuits, call QAOA, or execute on quantum hardware.
+
+**Not implemented:** Resource-capacity constraints for CPU, memory, or bandwidth; priority-aware scheduling; crossover; real VM execution; cloud-provider integration; reproducible random seeding; and a validated multi-objective optimizer. These are not implied by the project title or the input columns.
+
+## System Workflow
 
 ```mermaid
 flowchart TD
-    A[Cloud Task Dataset] --> B[Data Loading]
-    B --> C[Data Parsing and Processing]
-    C --> D[Task and Resource Analysis]
-    D --> E[Scheduling / Optimization Logic]
-    E --> F[Computed Workload Results]
-    F --> G[Dashboard]
-    G --> H[Charts and Visualizations]
-
-    U[User] --> G
+      A[User selects a .txt file] --> B{Extension and basic row checks pass?}
+      B -- No --> C[Show upload error]
+      B -- Yes --> D[Parse headers and numeric rows]
+      D --> E[Preview first 10 rows]
+      E --> F[Configure search and VM settings]
+      F --> G[Run in-browser simulation]
+      G --> H[Build round-robin assignment]
+      G --> I[Initialize and evolve candidate assignments]
+      H --> J[Calculate model metrics]
+      I --> J
+      J --> K[Store results in React context]
+      K --> L[Render metric cards, charts, and table]
+      L --> M[Optional browser print dialog]
 ```
 
-The application follows a frontend-oriented workflow in which workload information is loaded, processed, analyzed, and presented through the dashboard.
+1. Start on Home and open Upload.
+2. Choose a `.txt` workload. To try the bundled sample, select `data/quantum-tasks.txt` from the repository after starting the application.
+3. Review the parser's row and column counts and the first ten rows, then continue to Configure.
+4. Adjust algorithm and VM settings. Note that the crossover slider is currently inactive in the simulation.
+5. Run the simulation. The app calculates both assignments locally and updates progress.
+6. Review results and optionally open the browser's print dialog for the summary.
 
----
+## Application Pages and Modules
 
-## 🧩 Architecture Explanation
+| Page or module | Purpose |
+| --- | --- |
+| Home (`/`) | Project introduction and link into workload upload. |
+| Upload (`/upload`) | `.txt` selection/drop, basic parse validation, column badges, task/parameter counts, and up-to-10-row preview. |
+| Configure (`/configure`) | Search parameters, VM count/MIPS, and energy-model selection. Redirects users without uploaded data back to Upload. |
+| Simulation (`/simulation`) | Starts the computation, displays staged and generation progress, and navigates to Results after completion. |
+| Results (`/results`) | Displays the metric comparisons and charts, and offers “Run Again” and print-oriented export. |
+| About (`/about`) | In-app explanatory content about cloud scheduling and QIEA concepts. |
+| Not Found (`*`) | Fallback for unknown client-side routes. |
 
-### 1. Workload Dataset
+Shared simulation types and state live in `src/lib/simulation.ts` and `src/context/SimulationContext.tsx`; parsing is in `src/lib/fileParser.ts`.
 
-The project uses the workload dataset stored in:
+## Results and Visualization
+
+The Results page creates interactive charts from the current in-memory simulation output using Recharts:
+
+- **Energy consumption comparison:** Bar chart for round-robin and QIEA-labeled energy estimates.
+- **Fitness by generation:** Line chart of the best recorded fitness.
+- **Execution time comparison:** Bar chart of modeled makespan.
+- **Resource utilization comparison:** Bar chart of the normalized load-balance score.
+- **Estimated cost comparison:** Bar chart using the project's cost formula.
+- **Metric table:** Shows energy, execution time, utilization, scheduling efficiency, estimated cost, and the reported difference for each.
+
+There are no committed application screenshots or generated visualization images in the repository. These charts are rendered by the running application, not static image assets. No benchmark results are included in the repository, so this README makes no claim that one scheduler consistently outperforms another.
+
+## Project Structure
 
 ```text
-data/quantum-tasks.txt
-```
-
-The dataset contains structured cloud task information including task length, priority, deadline, CPU requirements, memory requirements, bandwidth, VM assignment, and execution time.
-
-### 2. Data Loading
-
-The application loads the workload information from the project dataset and makes the task records available for processing and analysis.
-
-### 3. Data Processing
-
-The task records are parsed and organized so that their scheduling and resource characteristics can be analyzed.
-
-### 4. Task and Resource Analysis
-
-The application examines workload characteristics such as priority, deadlines, resource requirements, VM allocation, and execution time.
-
-### 5. Scheduling / Optimization Logic
-
-The project represents cloud task scheduling as an optimization-oriented problem where multiple workload characteristics can be considered together.
-
-### 6. Dashboard and Visualization
-
-The processed workload information is presented through the dashboard using charts and visual components that make the task and resource characteristics easier to understand.
-📊 Dataset
-
-The project includes a workload dataset located at:
-
-data/quantum-tasks.txt
-
-The dataset uses a structured comma-separated format.
-
-The dataset contains 50 cloud task records, in addition to the header row.
-
-Dataset Header
-task_id,length,priority,deadline,cpu_req,memory_req,bandwidth,vm_id,execution_time
-Example Records
-1,4500,5,15,90,4096,800,1,45
-2,100,1,60,5,128,10,3,2
-3,3800,5,12,85,3584,750,1,40
-4,150,1,55,8,256,15,4,3
-
-The dataset provides a compact representation of heterogeneous cloud workloads and allows the application to analyze differences between tasks and their resource requirements.
-
-🧾 Dataset Schema
-Field	Description
-task_id	Unique identifier of the cloud task
-length	Workload/task length
-priority	Priority assigned to the task
-deadline	Scheduling deadline associated with the task
-cpu_req	CPU requirement of the task
-memory_req	Memory requirement of the task
-bandwidth	Bandwidth requirement of the task
-vm_id	Virtual machine associated with the task
-execution_time	Execution time associated with the task
-🔄 Data Processing
-
-The workload data provides the foundation for the application's scheduling and visualization process.
-
-The general processing flow consists of:
-
-Loading the task dataset.
-Reading the structured task records.
-Interpreting task and resource attributes.
-Organizing workload information for analysis.
-Evaluating scheduling-related characteristics.
-Preparing information for dashboard presentation.
-Generating visual representations of workload characteristics.
-
-The processing allows the application to compare tasks across different resource and scheduling dimensions.
-
-⚙️ Simulation and Optimization Logic
-
-The project approaches cloud scheduling as an optimization-oriented problem.
-
-Each workload contains multiple characteristics that can influence scheduling decisions.
-
-The optimization perspective considers the relationship between:
-
-Task priority
-Task size
-Deadline
-CPU demand
-Memory demand
-Bandwidth demand
-VM allocation
-Execution time
-
-Instead of treating every workload as identical, the project provides a structured representation of heterogeneous tasks so that scheduling and resource allocation can be analyzed from multiple dimensions.
-
-Current Implementation
-
-The current application focuses on workload analysis, scheduling/optimization concepts, and visualization.
-
-Quantum-Inspired Perspective
-
-The project is designed around the idea that complex cloud scheduling problems can potentially benefit from optimization techniques inspired by quantum computing.
-
-However, quantum-inspired concepts should not be interpreted as execution on physical quantum hardware.
-
-Future Quantum Optimization
-
-Advanced algorithms such as:
-
-Quantum Approximate Optimization Algorithm (QAOA)
-Quantum annealing
-Hybrid quantum-classical optimization
-
-could be explored in future versions.
-
-These are future research directions unless explicitly implemented in the current source code.
-
-📅 Scheduling Factors
-
-Cloud scheduling can involve several competing constraints.
-
-Scheduling Factor	Role
-Task Priority	Indicates the relative importance of a task
-Task Length	Represents the workload size
-Deadline	Represents the required scheduling time constraint
-CPU Requirement	Represents required processing capacity
-Memory Requirement	Represents required memory capacity
-Bandwidth	Represents required communication capacity
-VM ID	Identifies the associated virtual machine
-Execution Time	Represents task execution characteristics
-
-Considering these factors together provides a more meaningful representation of cloud workload scheduling than considering a single resource dimension.
-
-⚛️ Optimization Concept
-
-The central idea of the project is to treat cloud task scheduling as an optimization problem.
-
-A cloud scheduler may need to balance multiple objectives and constraints simultaneously.
-
-Conceptually, the optimization problem can be represented as:
-Cloud Workload
-      │
-      ├── Priority
-      ├── Deadline
-      ├── Task Length
-      ├── CPU Requirement
-      ├── Memory Requirement
-      ├── Bandwidth
-      ├── VM Assignment
-      └── Execution Time
-              │
-              ▼
-       Scheduling Analysis
-              │
-              ▼
-       Optimization Model
-              │
-              ▼
-       Workload Decisions
-The project provides a software environment for exploring this optimization perspective.
-
-The term quantum-inspired refers to the project's optimization direction and conceptual foundation; it does not by itself imply execution on a quantum computer.
-
-🔁 System Workflow
-<img width="797" height="187" alt="image" src="https://github.com/user-attachments/assets/2850fecf-24d7-4948-a735-9d5ad2fccb1d" />
-Workflow Steps
-
-1. Load Dataset
-
-The application starts with the structured cloud workload dataset.
-
-2. Parse Task Records
-
-Individual task records are interpreted according to their fields.
-
-3. Analyze Workload
-
-Task characteristics such as priority, deadlines, resource requirements, VM allocation, and execution time are analyzed.
-
-4. Scheduling / Optimization
-
-The workload is examined from an optimization-oriented scheduling perspective.
-
-5. Generate Results
-
-Processed information is converted into useful workload and scheduling information.
-
-6. Dashboard Presentation
-
-Results are presented through the web application.
-
-7. Visualization
-
-Charts and visual components provide an easier way to understand the workload.
-
-🖥️ Application Modules
-
-The application is organized around the cloud workload optimization dashboard.
-
-Dashboard
-
-The dashboard provides the main visual interface for understanding the workload and optimization-oriented information.
-
-Workload Analysis
-
-Task information can be examined across multiple dimensions including priority, execution time, VM assignment, and resource requirements.
-
-Resource Analysis
-
-CPU, memory, and bandwidth requirements provide insight into the resource demand associated with the workload.
-
-Scheduling Analysis
-
-Task characteristics provide the foundation for exploring scheduling and optimization decisions.
-
-Visualization
-
-Charts transform structured workload data into visual information that can be interpreted more easily.
-
-📈 Data Visualization
-
-The project uses visualization to make workload characteristics easier to understand.
-
-The dataset can be analyzed through dimensions such as:
-
-Priority Distribution
-
-Shows how workload priority values are distributed across tasks.
-
-VM Distribution
-
-Provides an overview of how tasks are associated with virtual machines.
-
-Execution Time
-
-Shows execution-time characteristics across the workload.
-
-Resource Demand
-
-Provides a visual representation of resource requirements such as CPU, memory, and bandwidth.
-
-Workload Analysis
-
-Combines task characteristics to provide a broader understanding of the workload.
-
-These visualizations help demonstrate how heterogeneous workloads can create different scheduling and resource-allocation requirements.
-
-📁 Project Structure
-
-The project follows a modern React/Vite application structure.
-
 quantum-cloud-optimizer/
-│
 ├── data/
-│   └── quantum-tasks.txt
-│
+│   └── quantum-tasks.txt          # 50-row comma-delimited sample workload
+├── public/
+│   ├── favicon.ico                # Browser favicon
+│   ├── placeholder.svg            # Existing generic placeholder asset
+│   └── robots.txt                 # Crawler instructions
 ├── src/
 │   ├── components/
+│   │   ├── ui/                    # Reusable UI primitives (Radix/shadcn-style)
+│   │   ├── Navbar.tsx             # Main route navigation
+│   │   └── NavLink.tsx             # Navigation link helper
+│   ├── context/
+│   │   └── SimulationContext.tsx  # In-memory workload/config/results state
+│   ├── hooks/
+│   │   ├── use-mobile.tsx         # Responsive viewport helper
+│   │   └── use-toast.ts           # Toast hook
+│   ├── lib/
+│   │   ├── fileParser.ts          # Delimited text parsing
+│   │   ├── simulation.ts          # Assignment strategies and metric calculations
+│   │   └── utils.ts                # Shared utility functions
 │   ├── pages/
-│   ├── ...
-│   └── ...
-│
-├── public/
-│
-├── package.json
-├── package-lock.json
-├── vite.config.*
-├── tsconfig.*
-├── eslint.config.*
+│   │   ├── AboutPage.tsx          # QIEA and project explanation
+│   │   ├── ConfigPage.tsx         # Simulation configuration
+│   │   ├── Home.tsx               # Landing/entry page
+│   │   ├── Index.tsx              # Existing fallback page component
+│   │   ├── NotFound.tsx           # Unknown-route page
+│   │   ├── ResultsPage.tsx        # Metrics and charts
+│   │   ├── SimulationPage.tsx     # Progress and simulation trigger
+│   │   └── UploadPage.tsx         # File input and preview
+│   ├── test/
+│   │   ├── example.test.ts        # Current Vitest example test
+│   │   └── setup.ts               # Test environment setup
+│   ├── App.tsx                    # Providers and route table
+│   ├── App.css                    # App-level stylesheet
+│   ├── index.css                  # Tailwind directives and theme styles
+│   ├── main.tsx                   # React entry point
+│   └── vite-env.d.ts              # Vite client types
+├── .gitignore
+├── bun.lock                       # Bun dependency lockfile
+├── bun.lockb                      # Binary Bun lockfile
+├── components.json                # UI generator configuration
+├── eslint.config.js               # ESLint configuration
+├── index.html                     # Vite HTML entry
+├── package.json                   # Dependencies and npm scripts
+├── package-lock.json              # npm dependency lockfile
+├── playwright-fixture.ts          # Playwright fixture setup
+├── playwright.config.ts           # Playwright configuration
+├── postcss.config.js              # PostCSS configuration
+├── tailwind.config.ts             # Tailwind theme/configuration
+├── tsconfig.json                  # TypeScript project references
+├── tsconfig.app.json              # Application TypeScript options
+├── tsconfig.node.json             # Tooling TypeScript options
+├── vite.config.ts                 # Vite config and port 8080
+├── vitest.config.ts               # Vitest config
 └── README.md
-The exact source structure may contain additional implementation-specific files and components.
+```
 
-Important Files
-| File / Directory         | Purpose                              |
-| ------------------------ | ------------------------------------ |
-| `data/quantum-tasks.txt` | Cloud workload dataset               |
-| `src/`                   | Main application source              |
-| `src/components/`        | Reusable UI components               |
-| `src/pages/`             | Application pages where implemented  |
-| `public/`                | Public/static application assets     |
-| `package.json`           | Project dependencies and npm scripts |
-| `README.md`              | Project documentation                |
-🚀 Getting Started
+The `src/components/ui/` directory contains the project's UI primitives; its individual component files are omitted from the tree to keep the overview readable. Generated directories such as `node_modules/` and `dist/` are not part of the source tree.
 
-Follow the steps below to run the Quantum Cloud Optimizer locally.
+## Getting Started
 
-📋 Prerequisites
+### Prerequisites
 
-Make sure the following are installed:
+- Windows, macOS, or Linux
+- Node.js with npm (use a current Node.js LTS release)
+- Git, if cloning from GitHub
+- A modern web browser
 
-Node.js
-npm
-Git
+The project has no environment-variable, credentials, database, or cloud-account setup requirements.
 
-Verify Node.js:
-node --version
-Verify npm:
+### Installation
 
-npm --version
+In Windows PowerShell, clone the repository and install its dependencies:
 
-Verify Git:
-
-git --version
-📥 Installation
-
-Clone the repository:
-
+```powershell
 git clone https://github.com/pudarivyshnavi/Quantum-Cloud-Optimizer.git
-
-Move into the project directory:
-
-cd Quantum-Cloud-Optimizer
-
-Install dependencies:
-
+Set-Location Quantum-Cloud-Optimizer
 npm install
-▶️ Running the Development Server
+```
 
-Start the Vite development server:
+If you already have the repository locally, open a terminal at the project root containing `package.json` and run `npm install`.
 
+### Running the Development Server
+
+```powershell
 npm run dev
+```
 
-The application is configured to run on:
+Vite is configured for port `8080`. Open [http://localhost:8080](http://localhost:8080). If Vite reports a different URL because the configured port is unavailable, use the URL printed in the terminal.
 
-http://localhost:8080/
+### Production Build and Preview
 
-Open the URL in your browser after the development server starts.
+Create a production bundle:
 
-🏭 Production Build
-
-Create a production build using:
-
+```powershell
 npm run build
+```
 
-The generated production files are placed in the project's build output directory according to the Vite configuration.
+For a development-mode build, use `npm run build:dev`. To serve the production bundle locally for review:
 
-👀 Preview
-
-To preview the production build locally:
-
+```powershell
 npm run preview
-🧪 Testing
+```
 
-The project includes a testing setup through the npm scripts defined in package.json.
+## Testing
 
-Run the test suite with:
+Run the configured Vitest suite once:
 
+```powershell
 npm run test
+```
 
-For continuous/watch-based testing where supported:
+Run Vitest in watch mode:
 
+```powershell
 npm run test:watch
-🔍 Linting
+```
 
-Run the project's linting checks with:
+The repository currently includes a minimal example assertion in `src/test/example.test.ts`. The presence of a passing example test should not be interpreted as comprehensive verification of parsing, scheduling, or UI behavior. Playwright config/fixture files are present, but no npm script is defined for running them.
 
+## Linting
+
+Run ESLint across the project with:
+
+```powershell
 npm run lint
+```
 
-Linting helps identify code-quality and consistency issues within the application source.
+## How the Application Works
 
-🔄 How the Application Works
+The page workflow is backed by `SimulationContext`, which retains the parsed workload, configuration, and results while navigating within the current SPA session. Upload invokes parsing; Configure changes the stored values; Simulation calls `runSimulation`; Results reads the returned metrics and renders them. Refreshing the page clears this context state because no persistence layer is implemented.
 
-The overall application process can be summarized as:
-                    ┌─────────────────────┐
-                    │   Cloud Task Data   │
-                    │ quantum-tasks.txt   │
-                    └──────────┬──────────┘
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │    Data Loading     │
-                    └──────────┬──────────┘
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │ Data Processing &   │
-                    │ Workload Analysis   │
-                    └──────────┬──────────┘
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │ Scheduling /        │
-                    │ Optimization Logic  │
-                    └──────────┬──────────┘
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │ Calculated Results  │
-                    └──────────┬──────────┘
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │ Dashboard & Charts  │
-                    └─────────────────────┘
-  Step 1 — Workload Input
+For each strategy, workload is accumulated per VM and converted to simulated time using the configured MIPS. The results page compares both metric objects and plots selected values. The sample file's task IDs and VM IDs do not control those generated assignments.
 
-The application works with structured cloud task records.
+## Key Capabilities
 
-Step 2 — Data Processing
+- Local text-file parsing and preview in the browser.
+- Adjustable VM and heuristic parameters.
+- Side-by-side round-robin and QIEA-labeled heuristic metrics.
+- Generation fitness history and interactive comparison charts.
+- A print-dialog-based results summary.
 
-Task information is organized according to workload and resource characteristics.
+## Project Goals
 
-Step 3 — Workload Analysis
+The project aims to make task-to-VM scheduling ideas approachable through an interactive visual demonstration. Its current value is as a learning and prototyping tool: users can inspect how a simple workload model and assignment heuristic produce comparative values, while seeing the assumptions that shape those values.
 
-Tasks are examined across priority, deadline, resource, VM, and execution dimensions.
+## Limitations and Technical Notes
 
-Step 4 — Optimization Perspective
+- This is a frontend-only simulation, not a production scheduler. It does not create VMs, execute jobs, monitor infrastructure, or call a cloud API.
+- “Quantum-inspired” describes classical code using a pair-and-rotation heuristic. There is no quantum hardware, circuit, QAOA, or other quantum backend.
+- Only the detected workload value and optional deadline feed the calculations. Priority, CPU, memory, bandwidth, input VM ID, and input execution time are not scheduling constraints or metric inputs.
+- The baseline is round-robin. A UI progress label says FCFS, but the code's mapping is round-robin.
+- The crossover slider is present but crossover is not implemented or used.
+- Random choices use `Math.random()` without a seed, so a run is not guaranteed to reproduce identical results.
+- Energy, utilization, efficiency, and cost are simplified model outputs. They are not calibrated power measurements, cloud bills, or a full discrete-event execution simulation.
+- A single example test exists; comprehensive unit, integration, and browser coverage is not included in the npm scripts.
+- There are no committed screenshots, benchmark reports, or evidence for generalized performance improvements.
 
-The workload is considered as a scheduling and resource-allocation problem.
+## Future Enhancements
 
-Step 5 — Visualization
+Potential future work, not current functionality:
 
-The results are presented using dashboard components and visualizations.
+- Add unit-aware schema validation and formal workload/VM capacity constraints.
+- Incorporate priority, CPU, memory, bandwidth, VM availability, and execution-time data into the scheduling model.
+- Implement and test crossover, or remove the inactive control; document and validate the heuristic against known cases.
+- Add seedable randomness and repeatable experiment configurations.
+- Compare additional baseline schedulers and established optimization methods with transparent objective functions.
+- Improve energy, utilization, deadline, and cost models and document their units and assumptions.
+- Add workload-scale experiments, statistical comparisons, and exportable structured reports.
+- Consider backend or cloud-provider integrations only as a separate production-oriented extension with appropriate security and infrastructure design.
+- Explore genuine quantum optimization frameworks as research work, clearly separate from the current classical heuristic.
 
-🌟 Key Capabilities
+## Disclaimer
 
-The Quantum Cloud Optimizer demonstrates:
+This application is an educational simulation. Its outputs depend on the uploaded numeric data, algorithm settings, and simplified formulas described above. They should not be used as operational cloud-allocation decisions, billing estimates, or claims of measured energy or performance savings.
 
-Structured cloud workload representation
-Task-level scheduling analysis
-Priority-aware workload analysis
-Deadline-aware scheduling concepts
-CPU requirement analysis
-Memory requirement analysis
-Bandwidth requirement analysis
-VM allocation analysis
-Execution-time analysis
-Workload visualization
-Optimization-oriented cloud scheduling
-Quantum-inspired optimization exploration
-Modern React/Vite dashboard development
-🎓 Project Goals
+## Author and Connect
 
-The major goals of the project are:
+**Author:** Pudari Vyshnavi
 
-Understand cloud task scheduling problems.
-Represent heterogeneous cloud workloads using structured data.
-Analyze different resource requirements.
-Explore scheduling and optimization concepts.
-Visualize cloud workload characteristics.
-Understand how multiple scheduling constraints interact.
-Explore the potential relationship between cloud optimization and quantum-inspired approaches.
-Build a modern interactive interface for presenting optimization-related information.
-🔮 Future Enhancements
+**GitHub:** [pudarivyshnavi](https://github.com/pudarivyshnavi)
 
-The project can be extended in several directions.
+**Repository:** [Quantum-Cloud-Optimizer](https://github.com/pudarivyshnavi/Quantum-Cloud-Optimizer)
 
-Advanced Quantum Optimization
+## License
 
-Future versions could investigate algorithms such as:
-
-QAOA
-Quantum annealing
-Hybrid quantum-classical optimization
-Dynamic Workload Generation
-
-The application could support dynamically generated workloads instead of relying only on static datasets.
-
-Advanced Scheduling Algorithms
-
-Additional scheduling strategies could be implemented and compared.
-
-Cloud Provider Integration
-
-Future versions could connect optimization results with real cloud platforms.
-
-Real-Time Workload Monitoring
-
-Real-time cloud resource and workload monitoring could be integrated.
-
-Larger Datasets
-
-The optimizer could be evaluated using larger and more diverse cloud workload datasets.
-
-Optimization Benchmarking
-
-Multiple scheduling approaches could be compared using standardized workload metrics.
-
-Quantum Hardware Integration
-
-Future research could explore execution of suitable optimization formulations using available quantum computing platforms.
-
-These are future enhancements and should not be interpreted as functionality already implemented in the current version.
-
-📝 Important Technical Notes
-The project is implemented as a modern web application.
-The workload dataset is stored in data/quantum-tasks.txt.
-The dataset contains 50 task records.
-The workload contains task, scheduling, resource, VM, and execution characteristics.
-The application uses visualization to make workload characteristics easier to understand.
-The project explores optimization and scheduling concepts rather than claiming production cloud orchestration.
-Quantum-inspired terminology describes the optimization direction of the project.
-Physical quantum hardware is not required to run the current web application.
-Advanced quantum algorithms are future enhancement opportunities unless implemented separately.
-The application is intended primarily as a project for exploring cloud scheduling, optimization, visualization, and quantum-inspired computing concepts.
-⚠️ Disclaimer
-
-Quantum Cloud Optimizer is an educational and experimental project developed to explore cloud workload scheduling, resource analysis, visualization, and optimization concepts.
-
-The project should not be interpreted as a production cloud orchestration platform or as evidence of performance on real-world cloud infrastructure unless independently deployed and benchmarked in such an environment.
-
-Similarly, quantum-inspired terminology in the project represents an exploration of optimization concepts and does not imply execution on physical quantum computing hardware.
-
-👩‍💻 Author and Connect
-Pudari Vyshnavi
-
-GitHub:
-
-https://github.com/pudarivyshnavi
-
-Project Repository:
-
-https://github.com/pudarivyshnavi/Quantum-Cloud-Optimizer
-
-<p align="center"> <strong>⚛️ Quantum Cloud Optimizer</strong> <br> Cloud Workload Analysis • Scheduling • Optimization • Visualization <br><br> Built by <strong>Pudari Vyshnavi</strong> </p> ```
+No `LICENSE` file is present in the repository. No open-source license is stated here; consult the repository owner before reuse or redistribution.
