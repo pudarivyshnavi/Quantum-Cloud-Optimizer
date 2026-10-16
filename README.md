@@ -406,7 +406,7 @@ Set-Location Quantum-Cloud-Optimizer
 npm install
 ```
 
-If you already have the repository locally, open a terminal at the project root containing `package.json` and run `npm install`.
+
 
 ### Running the Development Server
 
