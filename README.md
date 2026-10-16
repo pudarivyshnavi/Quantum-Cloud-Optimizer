@@ -510,6 +510,3 @@ This application is an educational simulation. Its outputs depend on the uploade
 
 **Repository:** [Quantum-Cloud-Optimizer](https://github.com/pudarivyshnavi/Quantum-Cloud-Optimizer)
 
-## License
-
-No `LICENSE` file is present in the repository. No open-source license is stated here; consult the repository owner before reuse or redistribution.
